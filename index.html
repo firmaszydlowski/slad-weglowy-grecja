@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B4F8F">
+<link rel="icon" href="data:,">
+<title>Mój ślad węglowy w Grecji</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #10222F; --tx: #3D5261; --tlo: #F3F6F8; --biel: #FFFFFF; --linia: #C9D5DD;
+  --morze: #0B4F8F; --morze-jasne: #E3EDF6; --szary: #7E93A3; --zielen: #0A6A56; --ostrzezenie: #A8321A;
+  --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--tlo); color: var(--ink); font: 18px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+h1, h2, p, ul { margin: 0; padding: 0; }
+button, input { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+h1:focus { outline: none; }
+main { max-width: 480px; margin: 0 auto; min-height: 100vh; min-height: 100dvh; padding: var(--s2); background: var(--tlo); }
+
+.duzy { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 60px; padding: var(--s2); border: 2px solid var(--morze); border-radius: 12px; background: var(--morze); color: var(--biel); font-weight: 700; font-size: 20px; text-align: center; text-decoration: none; }
+.duzy.drugi { background: var(--biel); color: var(--morze); }
+.duzy.drugi:active { color: var(--biel); }
+.duzy:active { background: var(--ink); }
+
+.start { margin: calc(var(--s2) * -1) calc(var(--s2) * -1) var(--s3); padding: var(--s4) var(--s2); background: var(--morze); color: var(--biel); }
+.start h1 { font-size: 40px; line-height: 1.08; font-weight: 800; letter-spacing: -0.01em; }
+.tekst { display: grid; gap: var(--s2); margin-bottom: var(--s2); }
+.tekst h2 { margin-bottom: 0; }
+.start-przycisk { position: sticky; bottom: 0; margin: 0 calc(var(--s2) * -1) calc(var(--s2) * -1); padding: var(--s2); background: var(--tlo); border-top: 2px solid var(--linia); }
+.przypomnienie { margin-bottom: var(--s1); }
+.drobne { font-size: 16px; color: var(--tx); }
+
+.gora { display: flex; align-items: center; justify-content: space-between; min-height: 48px; margin-bottom: var(--s1); }
+.cofnij { min-height: 48px; padding: 0 var(--s2) 0 0; border: 0; background: none; color: var(--morze); font-weight: 700; }
+.licznik { font-size: 16px; color: var(--tx); font-variant-numeric: tabular-nums; }
+.pasek { height: 8px; border-radius: 4px; background: var(--linia); margin-bottom: var(--s3); overflow: hidden; }
+.pasek span { display: block; height: 100%; background: var(--morze); }
+.pytanie h1 { font-size: 28px; line-height: 1.18; font-weight: 800; margin-bottom: var(--s1); }
+.pytanie .drobne { margin-bottom: var(--s1); }
+.odpowiedzi { display: grid; gap: var(--s1); margin-top: var(--s3); }
+.odp { width: 100%; min-height: 64px; padding: var(--s1) var(--s2); border: 2px solid var(--linia); border-radius: 12px; background: var(--biel); text-align: left; font-weight: 600; }
+.odp:active { border-color: var(--morze); background: var(--morze-jasne); }
+.odp[aria-pressed="true"] { border-color: var(--morze); background: var(--morze); color: var(--biel); }
+
+.wynik { display: grid; gap: var(--s4); padding-bottom: var(--s4); }
+.liczba h1 { font-size: 18px; font-weight: 700; color: var(--tx); }
+.liczba p.kg { font-size: 76px; line-height: 1.05; font-weight: 800; color: var(--morze); font-variant-numeric: tabular-nums; }
+.liczba p.kg span { font-size: 30px; font-weight: 700; white-space: nowrap; }
+.liczba p.za { font-size: 22px; font-weight: 700; margin-bottom: var(--s1); }
+h2 { font-size: 24px; line-height: 1.2; font-weight: 800; margin-bottom: var(--s2); }
+.czesci, .rady { list-style: none; display: grid; gap: var(--s2); }
+.wiersz { display: flex; justify-content: space-between; gap: var(--s2); align-items: baseline; font-weight: 600; }
+.wiersz b { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.slupek { height: 10px; margin-top: 4px; border-radius: 3px; background: var(--morze); }
+.slupek.staly { background: var(--szary); }
+.czesci .drobne { margin-top: 4px; }
+.kartka { padding: var(--s2); background: var(--morze-jasne); border-radius: 12px; }
+.kartka h2 { margin-bottom: var(--s1); }
+.kartka ul { padding-left: 22px; }
+details { border-top: 2px solid var(--linia); }
+summary { min-height: 56px; padding: var(--s2) 0; font-weight: 700; color: var(--morze); cursor: pointer; }
+details ul { padding-left: 20px; display: grid; gap: var(--s1); font-size: 16px; color: var(--tx); }
+details p { margin-top: var(--s2); font-size: 16px; color: var(--tx); }
+.rada { display: flex; gap: var(--s2); align-items: center; min-height: 64px; padding: var(--s1) var(--s2); background: var(--biel); border: 2px solid var(--linia); border-radius: 12px; font-weight: 600; cursor: pointer; overflow-wrap: anywhere; }
+.rada input { flex: none; width: 24px; height: 24px; margin: 0; accent-color: var(--morze); }
+.rada span { flex: 1; }
+.rada b { flex: none; color: var(--zielen); font-size: 20px; font-weight: 800; text-align: right; white-space: nowrap; }
+.rada.wybrana { border-color: var(--morze); background: var(--morze-jasne); }
+.rada.zablokowana { color: var(--tx); cursor: default; background: var(--tlo); }
+.rada.zablokowana b { color: var(--tx); }
+.wstep { margin-bottom: var(--s2); }
+.wstep-pod { margin-top: var(--s1); }
+#licznik-rzeczy { margin-top: var(--s1); }
+#lista-rzeczy ~ .drobne { margin-top: var(--s2); }
+.etykieta { display: block; margin: var(--s3) 0 var(--s1); font-weight: 700; }
+h2 + .etykieta { margin-top: 0; }
+input[type="text"] { display: block; width: 100%; min-height: 56px; padding: var(--s1) var(--s2); border: 2px solid var(--szary); border-radius: 12px; background: var(--biel); color: var(--ink); }
+input[type="text"]::placeholder { color: var(--tx); }
+.dodaj { display: flex; gap: var(--s1); }
+.dodaj input { flex: 1; min-width: 0; }
+.dodaj-przycisk { flex: none; min-height: 56px; padding: 0 var(--s2); border: 2px solid var(--morze); border-radius: 12px; background: var(--biel); color: var(--morze); font-weight: 700; }
+.dodaj-przycisk:active { background: var(--morze-jasne); }
+.blad { margin-top: var(--s1); font-size: 16px; font-weight: 700; color: var(--ostrzezenie); }
+.pobierz { margin-top: var(--s2); }
+.stan { margin-top: var(--s1); font-weight: 600; color: var(--zielen); overflow-wrap: anywhere; }
+.stan:empty { display: none; }
+.podglad { display: block; width: 100%; margin-top: var(--s2); border: 2px solid var(--linia); border-radius: 12px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main id="ekran"></main>
+<noscript><p>Ten kalkulator potrzebuje włączonego JavaScriptu.</p></noscript>
+<script>
+// Czysta logika kalkulatora. Bez DOM. Wartości i źródła opisuje METODA.md w tym samym folderze.
+
+// DO POTWIERDZENIA przez Pawła: trasa, długość pobytu i rodzaj hotelu.
+const KM_W_JEDNA_STRONE = 1900;
+const LICZBA_NOCY = 10;
+const LICZBA_DNI = 11;
+const KG_POKOJ_NOC = 16.3; // Cornell CHSB 2025, Grecja, hotele poza kurortami, mediana. Kurort: 36.6.
+
+// Założenie: średnia długość jednej wycieczki tam i z powrotem.
+const KM_NA_WYCIECZKE = 120;
+
+// Współczynniki ze źródeł.
+const KG_KM_AUTOKAR = 0.03948 + 0.00656; // UK DESNZ 2026: autokar + wydobycie i transport paliwa.
+const KG_KWH_GRECJA = 0.296; // Electricity Maps, Grecja, 2025.
+const LITRY_NA_MINUTE = 8.6; // TNS NIPO, Holandia, 2016.
+const MINUT_PRYSZNIC_SREDNIO = 8.9; // TNS NIPO, Holandia, 2016.
+const ROZNICA_TEMPERATUR = 20; // Z 18 do 38 stopni.
+const KWH_NA_LITR_I_STOPIEN = 0.001163; // Ciepło właściwe wody.
+const KG_DZIEN_WEGE = 4.16; // Scarborough i in. 2023, tabela 3, wegetarianie.
+const KG_DZIEN_MALO_MIESA = 5.37; // Poniżej 50 g mięsa dziennie.
+const KG_DZIEN_SREDNIO_MIESA = 7.04; // 50-100 g mięsa dziennie.
+const KG_DZIEN_DUZO_MIESA = 10.24; // Co najmniej 100 g mięsa dziennie.
+const KG_BUTELKA = 0.34 / 3; // Botto i in. 2011: 0,34 kg na 1,5 l, czyli na 3 butelki po 0,5 l.
+const KG_DRZEWO_ROK = 60; // US EPA: młode drzewo w mieście, średnia z 10 lat.
+
+// Założenia zachowań: średnia zawarta w noclegu i moc urządzeń.
+const KW_KLIMATYZACJA = 0.8;
+const GODZIN_KLIMATYZACJA_SREDNIO = 8;
+const KW_SWIATLO_I_LADOWARKI = 0.041; // Lampy 40 W + ładowarki bez telefonu 1 W.
+const GODZIN_ZOSTAWIONE_SREDNIO = 3;
+
+const KG_MINUTA_PRYSZNICA = LITRY_NA_MINUTE * ROZNICA_TEMPERATUR * KWH_NA_LITR_I_STOPIEN * KG_KWH_GRECJA;
+const LIMIT_PODPOWIEDZI = 3;
+
+// `cel` = odpowiedź po zmianie, `rada` = jej opis. Brak `cel` oznacza najlepszy poziom albo coś, czego uczeń nie zmieni.
+const PYTANIA = [
+  { id: "pokoj", pytanie: "Ile osób śpi w twoim pokoju? Policz też siebie.", odpowiedzi: [
+    { id: "1", tekst: "Tylko ja", wartosc: 1 },
+    { id: "2", tekst: "2 osoby", wartosc: 2 },
+    { id: "3", tekst: "3 osoby", wartosc: 3 },
+    { id: "4", tekst: "4 osoby lub więcej", wartosc: 4 },
+  ] },
+  { id: "prysznic", pytanie: "Ile zwykle trwa twój prysznic?", odpowiedzi: [
+    { id: "do5", tekst: "Do 5 minut", wartosc: 4 },
+    { id: "do10", tekst: "Od 5 do 10 minut", wartosc: 7.5, cel: "do5", rada: "Bierz prysznic do 5 minut" },
+    { id: "do15", tekst: "Od 10 do 15 minut", wartosc: 12.5, cel: "do5", rada: "Bierz prysznic do 5 minut" },
+    { id: "ponad15", tekst: "Ponad 15 minut", wartosc: 18, cel: "do5", rada: "Bierz prysznic do 5 minut" },
+  ] },
+  { id: "klima", pytanie: "Co z klimatyzacją albo ogrzewaniem w waszym pokoju?", odpowiedzi: [
+    { id: "nie", tekst: "Nie włączamy", wartosc: 0 },
+    { id: "wPokoju", tekst: "Działa tylko, gdy jesteśmy w pokoju", wartosc: GODZIN_KLIMATYZACJA_SREDNIO },
+    { id: "caly", tekst: "Działa prawie cały czas, także bez nas", wartosc: 20, cel: "wPokoju", rada: "Wyłączaj klimatyzację i ogrzewanie, gdy wychodzicie" },
+  ] },
+  { id: "swiatlo", pytanie: "Co ze światłem i ładowarkami, gdy wychodzicie z pokoju?", odpowiedzi: [
+    { id: "gasimy", tekst: "Gasimy i wyjmujemy", wartosc: 0 },
+    { id: "czasem", tekst: "Czasem coś zostaje", wartosc: GODZIN_ZOSTAWIONE_SREDNIO, cel: "gasimy", rada: "Gaś światło i wyjmuj ładowarkę, gdy wychodzisz" },
+    { id: "zwykle", tekst: "Zwykle wszystko zostaje", wartosc: 8, cel: "gasimy", rada: "Gaś światło i wyjmuj ładowarkę, gdy wychodzisz" },
+  ] },
+  { id: "mieso", pytanie: "Jak często jesz mięso albo ryby?", odpowiedzi: [
+    { id: "wcale", tekst: "Prawie wcale", wartosc: KG_DZIEN_WEGE },
+    { id: "rzadko", tekst: "Nie codziennie", wartosc: KG_DZIEN_MALO_MIESA, cel: "wcale", rada: "Wybieraj posiłki bez mięsa i ryb" },
+    { id: "raz", tekst: "Raz dziennie", wartosc: KG_DZIEN_SREDNIO_MIESA, cel: "rzadko", rada: "Jedz mięso lub ryby nie codziennie" },
+    { id: "dwa", tekst: "Dwa razy dziennie lub częściej", wartosc: KG_DZIEN_DUZO_MIESA, cel: "raz", rada: "Jedz mięso lub ryby tylko raz dziennie" },
+  ] },
+  { id: "resztki", pytanie: "Ile jedzenia zostaje ci na talerzu?", odpowiedzi: [
+    { id: "nic", tekst: "Prawie nic", wartosc: 0 },
+    { id: "troche", tekst: "Czasem trochę", wartosc: 0.05, cel: "nic", rada: "Nakładaj tyle, ile zjesz" },
+    { id: "sporo", tekst: "Często sporo", wartosc: 0.15, cel: "nic", rada: "Nakładaj tyle, ile zjesz" },
+  ] },
+  { id: "butelki", pytanie: "Ile małych plastikowych butelek wody wypijasz dziennie?", podpowiedz: "Duża butelka 1,5 l to 3 małe.", odpowiedzi: [
+    { id: "0", tekst: "Żadnej", wartosc: 0 },
+    { id: "1", tekst: "1 butelkę", wartosc: 1, cel: "0", rada: "Pij z własnej butelki zamiast plastikowych" },
+    { id: "2", tekst: "2 butelki", wartosc: 2, cel: "0", rada: "Pij z własnej butelki zamiast plastikowych" },
+    { id: "3", tekst: "3 butelki", wartosc: 3, cel: "0", rada: "Pij z własnej butelki zamiast plastikowych" },
+    { id: "4", tekst: "4 butelki lub więcej", wartosc: 4, cel: "0", rada: "Pij z własnej butelki zamiast plastikowych" },
+  ] },
+  { id: "wycieczki", pytanie: "Ile wycieczek autokarem macie podczas pobytu?", odpowiedzi: [
+    { id: "0", tekst: "Żadnej", wartosc: 0 },
+    { id: "1-2", tekst: "1 albo 2", wartosc: 1.5 },
+    { id: "3-4", tekst: "3 albo 4", wartosc: 3.5 },
+    { id: "5+", tekst: "5 lub więcej", wartosc: 5.5 },
+  ] },
+];
+
+function wybranaOdpowiedz(pytanie, odpowiedzi) {
+  const wybrana = pytanie.odpowiedzi.find((a) => a.id === odpowiedzi[pytanie.id]);
+  if (!wybrana) throw new Error(`Brak odpowiedzi na pytanie: ${pytanie.id}`);
+  return wybrana;
+}
+
+function wartosci(odpowiedzi) {
+  return Object.fromEntries(PYTANIA.map((p) => [p.id, wybranaOdpowiedz(p, odpowiedzi).wartosc]));
+}
+
+// Prysznic, klimatyzacja i światło to odchylenia od średniej zawartej w noclegu, więc mogą być ujemne.
+function oblicz(odpowiedzi) {
+  const w = wartosci(odpowiedzi);
+  const nocnyPrad = (kw, godziny, srednio) => ((godziny - srednio) * kw * KG_KWH_GRECJA * LICZBA_NOCY) / w.pokoj;
+  const jedzenie = w.mieso * LICZBA_DNI;
+  const czesci = {
+    przejazd: 2 * KM_W_JEDNA_STRONE * KG_KM_AUTOKAR,
+    nocleg: (KG_POKOJ_NOC * LICZBA_NOCY) / w.pokoj,
+    prysznic: (w.prysznic - MINUT_PRYSZNIC_SREDNIO) * KG_MINUTA_PRYSZNICA * LICZBA_NOCY,
+    klima: nocnyPrad(KW_KLIMATYZACJA, w.klima, GODZIN_KLIMATYZACJA_SREDNIO),
+    swiatlo: nocnyPrad(KW_SWIATLO_I_LADOWARKI, w.swiatlo, GODZIN_ZOSTAWIONE_SREDNIO),
+    jedzenie,
+    resztki: jedzenie * w.resztki,
+    woda: w.butelki * KG_BUTELKA * LICZBA_DNI,
+    wycieczki: w.wycieczki * KM_NA_WYCIECZKE * KG_KM_AUTOKAR,
+  };
+  const suma = Object.values(czesci).reduce((a, b) => a + b, 0);
+  return { suma, czesci };
+}
+
+// Największe reszty: pokazane całe kilogramy dają dokładnie zaokrągloną sumę, bo uczeń może je dodać na kartce.
+function zaokraglDoSumy(wartosciKg, suma) {
+  const wynik = wartosciKg.map(Math.floor);
+  const brakuje = Math.round(suma) - wynik.reduce((a, b) => a + b, 0);
+  const kolejnosc = wartosciKg.map((v, i) => [v - wynik[i], i]).sort((a, b) => b[0] - a[0]);
+  kolejnosc.slice(0, brakuje).forEach(([, i]) => { wynik[i] += 1; });
+  return wynik;
+}
+
+function podzial(wynik) {
+  const c = wynik.czesci;
+  const wiersze = [
+    { id: "przejazd", nazwa: "Przejazd autokarem tam i z powrotem", kg: c.przejazd },
+    { id: "jedzenie", nazwa: "Jedzenie", kg: c.jedzenie + c.resztki },
+    { id: "nocleg", nazwa: "Nocleg", kg: c.nocleg + c.prysznic + c.klima + c.swiatlo },
+    { id: "wycieczki", nazwa: "Wycieczki autokarem", kg: c.wycieczki },
+    { id: "woda", nazwa: "Woda w plastikowych butelkach", kg: c.woda },
+  ];
+  const zaokraglone = zaokraglDoSumy(wiersze.map((w) => w.kg), wynik.suma);
+  return wiersze.map((w, i) => ({ ...w, zaokraglone: zaokraglone[i] }));
+}
+
+function wszystkiePodpowiedzi(odpowiedzi) {
+  const bazowa = oblicz(odpowiedzi).suma;
+  return PYTANIA
+    .map((p) => ({ pytanie: p.id, odpowiedz: wybranaOdpowiedz(p, odpowiedzi) }))
+    .filter(({ odpowiedz }) => odpowiedz.cel !== undefined)
+    .map(({ pytanie, odpowiedz }) => ({
+      pytanie,
+      rada: odpowiedz.rada,
+      oszczednosc: bazowa - oblicz({ ...odpowiedzi, [pytanie]: odpowiedz.cel }).suma,
+    }))
+    .sort((a, b) => b.oszczednosc - a.oszczednosc);
+}
+
+function podpowiedzi(odpowiedzi) {
+  return wszystkiePodpowiedzi(odpowiedzi).slice(0, LIMIT_PODPOWIEDZI);
+}
+
+function ileDrzew(suma) {
+  return Math.round(suma / KG_DRZEWO_ROK);
+}
+
+if (typeof module !== "undefined") {
+  module.exports = { PYTANIA, oblicz, podzial, podpowiedzi, wszystkiePodpowiedzi, ileDrzew, zaokraglDoSumy, LIMIT_PODPOWIEDZI, KM_W_JEDNA_STRONE, LICZBA_NOCY, LICZBA_DNI, KG_POKOJ_NOC, KG_KM_AUTOKAR, KG_KWH_GRECJA, KG_MINUTA_PRYSZNICA, KG_BUTELKA, KM_NA_WYCIECZKE, KG_DZIEN_WEGE, KG_DZIEN_DUZO_MIESA, KG_DRZEWO_ROK };
+}
+
+// Czysta logika zapisu wyniku: nazwa pliku, wybór rzeczy, zawijanie i układ obrazka. Bez DOM i bez stanu.
+
+const LIMIT_RZECZY = 3;
+const MAKS_ZNAKOW_W_NAZWIE = 40;
+const NAZWA_ZASTEPCZA = "uczestnik";
+const PLIK_PREFIKS = "Slad-weglowy-"; // Rdzenie „slad” i „weglow” z cele.json, po nich monitor przypisuje plik.
+
+const OBRAZEK_SZEROKOSC = 1080;
+const OBRAZEK_MARGINES = 72;
+const RODZINA = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+const KOLOR_MORZE = "#0B4F8F";
+const KOLOR_TEKST = "#10222F";
+const KOLOR_DRUGI = "#3D5261";
+const KOLOR_SZARY = "#7E93A3";
+const KOLOR_TLO = "#FFFFFF";
+const FONT_TYTUL = `800 64px ${RODZINA}`;
+const FONT_IMIE = `700 42px ${RODZINA}`;
+const FONT_LICZBA = `800 150px ${RODZINA}`;
+const FONT_JEDNOSTKA = `700 54px ${RODZINA}`;
+const FONT_NAGLOWEK = `800 44px ${RODZINA}`;
+const FONT_TEKST = `400 36px ${RODZINA}`;
+const FONT_TEKST_MOCNY = `700 36px ${RODZINA}`;
+const INTERLINIA = 1.28;
+const WYSOKOSC_SLUPKA = 16;
+
+function bezDiakrytykow(tekst) {
+  return tekst.replace(/ł/g, "l").replace(/Ł/g, "L").normalize("NFKD").replace(/[̀-ͯ]/g, "");
+}
+
+function nazwaPliku(imieIZespol) {
+  const rdzen = bezDiakrytykow(imieIZespol)
+    .replace(/[^A-Za-z0-9]+/g, "-")
+    .replace(/^-+/, "")
+    .slice(0, MAKS_ZNAKOW_W_NAZWIE)
+    .replace(/-+$/, "");
+  return `${PLIK_PREFIKS}${rdzen || NAZWA_ZASTEPCZA}.png`;
+}
+
+function czyPelne(wybrane) {
+  return wybrane.length >= LIMIT_RZECZY;
+}
+
+function przelaczRzecz(wybrane, rzecz) {
+  if (wybrane.some((r) => r.id === rzecz.id)) return wybrane.filter((r) => r.id !== rzecz.id);
+  return czyPelne(wybrane) ? wybrane : [...wybrane, rzecz];
+}
+
+function dodajWlasnaRzecz(wybrane, tekst, id) {
+  const czysty = tekst.trim();
+  const powtorka = wybrane.some((r) => r.tekst.toLowerCase() === czysty.toLowerCase());
+  if (!czysty || powtorka || czyPelne(wybrane)) return wybrane;
+  return [...wybrane, { id, tekst: czysty, wlasna: true }];
+}
+
+// Po cofnięciu i zmianie odpowiedzi podpowiedź może zniknąć albo mieć inny tekst; własne rzeczy zostają.
+function zsynchronizujWybrane(wybrane, rady) {
+  return wybrane.flatMap((r) => {
+    if (r.wlasna) return [r];
+    const rada = rady.find((x) => x.pytanie === r.id);
+    return rada ? [{ id: r.id, tekst: rada.rada }] : [];
+  });
+}
+
+function kgCzesci(wiersz) {
+  return wiersz.zaokraglone === 0 && wiersz.kg > 0 ? "mniej niż 1 kg" : `${wiersz.zaokraglone} kg`;
+}
+
+function podzielDlugieSlowo(slowo, szerokosc, mierz) {
+  const kawalki = [];
+  let kawalek = "";
+  for (const znak of Array.from(slowo)) {
+    if (kawalek && mierz(kawalek + znak) > szerokosc) {
+      kawalki.push(kawalek);
+      kawalek = "";
+    }
+    kawalek += znak;
+  }
+  return [...kawalki, kawalek];
+}
+
+function zawijaj(tekst, szerokosc, mierz) {
+  const linie = [];
+  let linia = "";
+  const slowa = tekst.split(/\s+/).filter(Boolean);
+  for (const slowo of slowa.flatMap((s) => (mierz(s) > szerokosc ? podzielDlugieSlowo(s, szerokosc, mierz) : [s]))) {
+    const proba = linia ? `${linia} ${slowo}` : slowo;
+    if (linia && mierz(proba) > szerokosc) {
+      linie.push(linia);
+      linia = slowo;
+    } else {
+      linia = proba;
+    }
+  }
+  return linia ? [...linie, linia] : [];
+}
+
+function rozmiarFontu(font) {
+  return Number(/(\d+)px/.exec(font)[1]);
+}
+
+// Dopisuje zawinięty akapit do komend i zwraca nowy y.
+function akapit(komendy, tekst, poz, mierz) {
+  const { x, y, szerokosc, font, kolor } = poz;
+  const wysokoscLinii = Math.round(rozmiarFontu(font) * INTERLINIA);
+  const linie = zawijaj(tekst, szerokosc, (t) => mierz(t, font));
+  linie.forEach((linia, i) => komendy.push({ typ: "tekst", tekst: linia, x, y: y + i * wysokoscLinii, font, kolor }));
+  return y + linie.length * wysokoscLinii;
+}
+
+function ukladNaglowka(komendy, imie, mierz) {
+  const w = OBRAZEK_SZEROKOSC - 2 * OBRAZEK_MARGINES;
+  const tytul = [];
+  const koniecTytulu = akapit(tytul, "Mój ślad węglowy w Grecji", { x: OBRAZEK_MARGINES, y: 56, szerokosc: w, font: FONT_TYTUL, kolor: KOLOR_TLO }, mierz);
+  komendy.push({ typ: "prostokat", x: 0, y: 0, szerokosc: OBRAZEK_SZEROKOSC, wysokosc: koniecTytulu + 48, kolor: KOLOR_MORZE }, ...tytul);
+  return akapit(komendy, imie, { x: OBRAZEK_MARGINES, y: koniecTytulu + 88, szerokosc: w, font: FONT_IMIE, kolor: KOLOR_TEKST }, mierz);
+}
+
+function ukladLiczby(komendy, kg, y, mierz) {
+  const liczba = String(kg);
+  const wysokosc = Math.round(rozmiarFontu(FONT_LICZBA) * 1.05);
+  komendy.push({ typ: "tekst", tekst: liczba, x: OBRAZEK_MARGINES, y, font: FONT_LICZBA, kolor: KOLOR_MORZE });
+  komendy.push({ typ: "tekst", tekst: "kg CO2e za pobyt", x: OBRAZEK_MARGINES + mierz(liczba, FONT_LICZBA) + 24, y: y + 78, font: FONT_JEDNOSTKA, kolor: KOLOR_MORZE });
+  return y + wysokosc;
+}
+
+function ukladCzesci(komendy, czesci, yStart, mierz) {
+  const w = OBRAZEK_SZEROKOSC - 2 * OBRAZEK_MARGINES;
+  const najwieksza = Math.max(...czesci.map((c) => c.kg));
+  let y = yStart;
+  for (const c of czesci) {
+    const opis = kgCzesci(c);
+    const szerokoscKg = mierz(opis, FONT_TEKST_MOCNY);
+    komendy.push({ typ: "tekst", tekst: opis, x: OBRAZEK_SZEROKOSC - OBRAZEK_MARGINES - szerokoscKg, y, font: FONT_TEKST_MOCNY, kolor: KOLOR_TEKST });
+    y = akapit(komendy, c.nazwa, { x: OBRAZEK_MARGINES, y, szerokosc: w - szerokoscKg - 32, font: FONT_TEKST, kolor: KOLOR_TEKST }, mierz) + 6;
+    if (c.kg > 0) komendy.push({ typ: "prostokat", x: OBRAZEK_MARGINES, y, szerokosc: Math.max(4, (c.kg / najwieksza) * w), wysokosc: WYSOKOSC_SLUPKA, kolor: c.id === "przejazd" ? KOLOR_SZARY : KOLOR_MORZE });
+    y += WYSOKOSC_SLUPKA + 24;
+  }
+  return y;
+}
+
+function ukladRzeczy(komendy, rzeczy, yStart, mierz) {
+  const wciecie = 56;
+  const w = OBRAZEK_SZEROKOSC - 2 * OBRAZEK_MARGINES - wciecie;
+  let y = yStart;
+  if (!rzeczy.length) return akapit(komendy, "Jeszcze nie wybrano.", { x: OBRAZEK_MARGINES, y, szerokosc: w, font: FONT_TEKST, kolor: KOLOR_DRUGI }, mierz);
+  rzeczy.forEach((tekst, i) => {
+    komendy.push({ typ: "tekst", tekst: `${i + 1}.`, x: OBRAZEK_MARGINES, y, font: FONT_TEKST_MOCNY, kolor: KOLOR_MORZE });
+    y = akapit(komendy, tekst, { x: OBRAZEK_MARGINES + wciecie, y, szerokosc: w, font: FONT_TEKST, kolor: KOLOR_TEKST }, mierz) + 14;
+  });
+  return y;
+}
+
+function ukladObrazka(dane, mierz) {
+  const komendy = [];
+  const w = OBRAZEK_SZEROKOSC - 2 * OBRAZEK_MARGINES;
+  let y = ukladNaglowka(komendy, dane.imieIZespol, mierz);
+  y = ukladLiczby(komendy, dane.kg, y + 16, mierz);
+  y = akapit(komendy, "To szacunek, a nie pomiar.", { x: OBRAZEK_MARGINES, y: y + 4, szerokosc: w, font: FONT_TEKST, kolor: KOLOR_DRUGI }, mierz);
+  y = akapit(komendy, "Z czego to się bierze", { x: OBRAZEK_MARGINES, y: y + 48, szerokosc: w, font: FONT_NAGLOWEK, kolor: KOLOR_TEKST }, mierz);
+  y = ukladCzesci(komendy, dane.czesci, y + 20, mierz);
+  y = akapit(komendy, "Rzeczy do zmiany", { x: OBRAZEK_MARGINES, y: y + 28, szerokosc: w, font: FONT_NAGLOWEK, kolor: KOLOR_TEKST }, mierz);
+  y = ukladRzeczy(komendy, dane.rzeczy, y + 20, mierz);
+  return { szerokosc: OBRAZEK_SZEROKOSC, wysokosc: y + OBRAZEK_MARGINES, komendy };
+}
+
+function rysujObrazek(ctx, uklad) {
+  ctx.fillStyle = KOLOR_TLO;
+  ctx.fillRect(0, 0, uklad.szerokosc, uklad.wysokosc);
+  ctx.textBaseline = "top";
+  for (const k of uklad.komendy) {
+    ctx.fillStyle = k.kolor;
+    if (k.typ === "prostokat") {
+      ctx.fillRect(k.x, k.y, k.szerokosc, k.wysokosc);
+    } else {
+      ctx.font = k.font;
+      ctx.fillText(k.tekst, k.x, k.y);
+    }
+  }
+}
+
+function dataUrlNaBlob(dataUrl) {
+  const [naglowek, tresc] = dataUrl.split(",");
+  const typ = /data:([^;]+);base64/.exec(naglowek)[1];
+  const bajty = Uint8Array.from(atob(tresc), (z) => z.charCodeAt(0));
+  return new Blob([bajty], { type: typ });
+}
+
+function czyIos(nawigator) {
+  return /iP(hone|ad|od)/.test(nawigator.userAgent) || (nawigator.platform === "MacIntel" && nawigator.maxTouchPoints > 1);
+}
+
+if (typeof module !== "undefined") {
+  module.exports = { LIMIT_RZECZY, nazwaPliku, czyPelne, przelaczRzecz, dodajWlasnaRzecz, zsynchronizujWybrane, kgCzesci, zawijaj, ukladObrazka, rysujObrazek, dataUrlNaBlob, czyIos };
+}
+
+const ADRES_DROPBOX = "https://www.dropbox.com/request/9en8vza88dlqm2zo7u8d";
+// Ekran wyniku: wybór 3 rzeczy, imię, obrazek PNG, wysyłka. Dane tylko w pamięci strony.
+
+const MAKS_ZNAKOW_IMIE = 60;
+const MAKS_ZNAKOW_RZECZ = 80;
+const CZAS_ZWOLNIENIA_ADRESU_MS = 60000;
+let zapis = nowyZapis();
+
+function nowyZapis() {
+  return { imie: "", wybrane: [], kolejnaWlasna: 1 };
+}
+
+function esc(tekst) {
+  return tekst.replace(/[&<>"']/g, (z) => `&#${z.charCodeAt(0)};`);
+}
+
+function kgDoOszczedzenia(x) {
+  return x < 1 ? "mniej niż 1 kg" : `−${Math.round(x)} kg`;
+}
+
+function wierszRzeczy(id, tekst, oszczednosc) {
+  const zaznaczona = zapis.wybrane.some((r) => r.id === id);
+  const zablokowana = !zaznaczona && czyPelne(zapis.wybrane);
+  const kg = oszczednosc === undefined ? "" : `<b>${kgDoOszczedzenia(oszczednosc)}</b>`;
+  return `<li><label class="rada${zaznaczona ? " wybrana" : ""}${zablokowana ? " zablokowana" : ""}">
+    <input type="checkbox" data-rzecz="${esc(id)}"${zaznaczona ? " checked" : ""}${zablokowana ? " disabled" : ""}>
+    <span>${esc(tekst)}</span>${kg}
+  </label></li>`;
+}
+
+function listaRzeczy() {
+  const rady = podpowiedzi(odpowiedzi).map((r) => wierszRzeczy(r.pytanie, r.rada, r.oszczednosc));
+  const wlasne = zapis.wybrane.filter((r) => r.wlasna).map((r) => wierszRzeczy(r.id, r.tekst));
+  const pelne = czyPelne(zapis.wybrane);
+  return `<ul class="rady">${rady.join("")}${wlasne.join("")}</ul>
+    <p class="drobne" id="licznik-rzeczy">Wybrane: ${zapis.wybrane.length} z ${LIMIT_RZECZY}.${pelne ? " Odznacz jedną, żeby wybrać inną." : ""}</p>`;
+}
+
+function sekcjaRzeczy() {
+  const rady = podpowiedzi(odpowiedzi);
+  const woda = rady.some((r) => r.pytanie === "butelki") ? "<p class=\"drobne\">Wodę do własnej butelki bierz tam, gdzie opiekun potwierdzi, że można ją pić.</p>" : "";
+  const malo = rady.length < LIMIT_RZECZY ? "<p class=\"drobne\">Tu już niewiele zostało do zmiany. Dopisz też coś od siebie, na przykład segregowanie śmieci albo mniej zakupów.</p>" : "";
+  return `<section>
+    <h2>Co da najwięcej</h2>
+    <p class="drobne wstep">Zaznacz najwyżej ${LIMIT_RZECZY} rzeczy, które zmienisz. Liczba pokazuje, ile kilogramów ubędzie.</p>
+    <div id="lista-rzeczy">${listaRzeczy()}</div>
+    <label class="etykieta" for="wlasna">Twoja własna rzecz</label>
+    <div class="dodaj">
+      <input id="wlasna" type="text" autocomplete="off" maxlength="${MAKS_ZNAKOW_RZECZ}" enterkeyhint="done">
+      <button class="dodaj-przycisk" data-akcja="dodaj-wlasna">Dodaj</button>
+    </div>
+    ${woda}${malo}
+    <p class="drobne">Światło i ładowarki zmieniają wynik o mniej niż 1 kg na cały pobyt. Warto je wyłączać, ale prysznic i jedzenie znaczą więcej.</p>
+  </section>`;
+}
+
+function sekcjaPobierania() {
+  return `<section>
+    <h2>Pobierz wynik</h2>
+    <label class="etykieta" for="imie">Imię i numer zespołu</label>
+    <input id="imie" type="text" autocomplete="off" maxlength="${MAKS_ZNAKOW_IMIE}" placeholder="np. Ania, zespół 3" value="${esc(zapis.imie)}" aria-describedby="blad-imie">
+    <p class="blad" id="blad-imie" hidden>Wpisz imię i numer zespołu, żeby pobrać wynik.</p>
+    <button class="duzy pobierz" data-akcja="pobierz">Pobierz wynik</button>
+    <p class="drobne wstep-pod">Gdyby pobieranie nie działało, zróbcie zrzut ekranu i wyślijcie jego.</p>
+    <p class="stan" id="stan-pobrania" role="status"></p>
+    <img id="podglad" class="podglad" alt="Podgląd obrazka z wynikiem" hidden>
+  </section>
+  <section>
+    <h2>Wyślij do szkoły</h2>
+    <a class="duzy" id="wyslij" href="${esc(ADRES_DROPBOX)}" target="_blank" rel="noopener noreferrer">Wyślij do folderu szkoły</a>
+    <p class="drobne wstep-pod">Otworzy się strona Dropboxa. Wybierz tam pobrany plik. Ta strona sama niczego nie wysyła.</p>
+  </section>`;
+}
+
+function odswiezRzeczy(idDoFokusu) {
+  document.getElementById("lista-rzeczy").innerHTML = listaRzeczy();
+  if (idDoFokusu) {
+    const pole = [...document.querySelectorAll("[data-rzecz]")].find((p) => p.dataset.rzecz === idDoFokusu);
+    if (pole) pole.focus();
+  }
+  schowajPodglad();
+}
+
+function schowajPodglad() {
+  const podglad = document.getElementById("podglad");
+  podglad.hidden = true;
+  podglad.removeAttribute("src");
+  document.getElementById("stan-pobrania").textContent = "";
+}
+
+function przelaczZaznaczenie(pole) {
+  const id = pole.dataset.rzecz;
+  const wybrana = zapis.wybrane.find((r) => r.id === id);
+  const rada = podpowiedzi(odpowiedzi).find((r) => r.pytanie === id);
+  zapis.wybrane = przelaczRzecz(zapis.wybrane, wybrana || { id, tekst: rada.rada });
+  odswiezRzeczy(id);
+}
+
+function dodajWlasna() {
+  const pole = document.getElementById("wlasna");
+  const id = `wlasna-${zapis.kolejnaWlasna}`;
+  const po = dodajWlasnaRzecz(zapis.wybrane, pole.value, id);
+  if (po === zapis.wybrane) return;
+  zapis.wybrane = po;
+  zapis.kolejnaWlasna += 1;
+  pole.value = "";
+  odswiezRzeczy();
+}
+
+function generujObrazek() {
+  const wynikObliczen = oblicz(odpowiedzi);
+  const plotno = document.createElement("canvas");
+  const pomiar = plotno.getContext("2d");
+  const mierz = (tekst, font) => {
+    pomiar.font = font;
+    return pomiar.measureText(tekst).width;
+  };
+  const uklad = ukladObrazka({
+    imieIZespol: zapis.imie.trim(),
+    kg: Math.round(wynikObliczen.suma),
+    czesci: podzial(wynikObliczen),
+    rzeczy: zapis.wybrane.map((r) => r.tekst),
+  }, mierz);
+  plotno.width = uklad.szerokosc;
+  plotno.height = uklad.wysokosc;
+  rysujObrazek(plotno.getContext("2d"), uklad);
+  return { dataUrl: plotno.toDataURL("image/png"), nazwa: nazwaPliku(zapis.imie) };
+}
+
+function pobierzPrzezLink(blob, nazwa) {
+  const adres = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = adres;
+  link.download = nazwa;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(adres), CZAS_ZWOLNIENIA_ADRESU_MS);
+}
+
+// iOS: arkusz udostępniania, bo a[download] zależy tam od wersji systemu. Reszta i każdy błąd arkusza: zwykłe pobranie.
+async function zapiszObrazek(blob, nazwa) {
+  const plik = new File([blob], nazwa, { type: "image/png" });
+  if (czyIos(navigator) && navigator.canShare && navigator.canShare({ files: [plik] })) {
+    try {
+      await navigator.share({ files: [plik] });
+      return "Gotowe. Teraz wyślij plik do folderu szkoły.";
+    } catch (blad) {
+      if (blad.name === "AbortError") return "Nie zapisano. Dotknij „Pobierz wynik” jeszcze raz.";
+      console.warn("Arkusz udostępniania niedostępny, pobieram plik:", blad.name);
+    }
+  }
+  pobierzPrzezLink(blob, nazwa);
+  return `Pobrano plik ${nazwa}. Teraz wyślij go do folderu szkoły.`;
+}
+
+async function obsluzPobierz() {
+  const pole = document.getElementById("imie");
+  const blad = document.getElementById("blad-imie");
+  zapis.imie = pole.value;
+  blad.hidden = zapis.imie.trim() !== "";
+  if (!blad.hidden) {
+    pole.focus();
+    return;
+  }
+  const { dataUrl, nazwa } = generujObrazek(); // Synchronicznie: iOS pozwala na share tylko tuż po dotknięciu.
+  const podglad = document.getElementById("podglad");
+  podglad.src = dataUrl;
+  podglad.hidden = false;
+  const stan = await zapiszObrazek(dataUrlNaBlob(dataUrl), nazwa);
+  document.getElementById("stan-pobrania").textContent = stan;
+}
+
+function pokazBladPobierania(blad) {
+  console.error("Nie udało się zrobić obrazka:", blad);
+  document.getElementById("stan-pobrania").textContent = "Nie udało się zrobić obrazka. Zróbcie zrzut ekranu z wynikiem i wyślijcie jego.";
+}
+
+function obsluzZapisZmiana(zdarzenie) {
+  if (zdarzenie.target.dataset.rzecz !== undefined) przelaczZaznaczenie(zdarzenie.target);
+}
+
+function obsluzZapisWpisywanie(zdarzenie) {
+  if (zdarzenie.target.id !== "imie") return;
+  zapis.imie = zdarzenie.target.value;
+  document.getElementById("blad-imie").hidden = true;
+  schowajPodglad();
+}
+
+function obsluzZapisKlawisz(zdarzenie) {
+  if (zdarzenie.key === "Enter" && zdarzenie.target.id === "wlasna") dodajWlasna();
+}
+
+function wyczyscZapis() {
+  zapis = nowyZapis();
+}
+
+// Nawigacja i ekrany kalkulatora. Stan tylko w pamięci strony.
+
+const HASH_WYNIK = "#wynik";
+const OSTATNI_KROK = PYTANIA.length;
+const BLOKADA_PODWOJNEGO_DOTKNIECIA_MS = 250;
+const ekran = document.getElementById("ekran");
+let odpowiedzi = {};
+let czasRysowania = 0;
+
+function liczbaPl(x, miejsca) {
+  return x.toLocaleString("pl-PL", { minimumFractionDigits: miejsca, maximumFractionDigits: miejsca });
+}
+
+// Odchylenia od średniej: ze znakiem i z uczciwym „mniej niż 1 kg”.
+function kgZeZnakiem(x) {
+  if (x === 0) return "bez zmian";
+  if (Math.abs(x) < 1) return "mniej niż 1 kg";
+  return `${x > 0 ? "+" : "−"}${Math.abs(Math.round(x))} kg`;
+}
+
+function drzewaTekst(n) {
+  const koncowka = n % 10;
+  const nascie = n % 100 >= 12 && n % 100 <= 14;
+  if (n === 1) return "1 młode drzewo w mieście musiałoby";
+  if (koncowka >= 2 && koncowka <= 4 && !nascie) return `${n} młode drzewa w mieście musiałyby`;
+  return `${n} młodych drzew w mieście musiałoby`;
+}
+
+function start() {
+  return `
+    <div class="start"><h1 tabindex="-1">Mój ślad węglowy w Grecji</h1></div>
+    <section class="tekst" id="co-to">
+      <h2>Co to jest ślad węglowy?</h2>
+      <p>Wszystko, co robimy, zużywa energię albo rzeczy, które ktoś musiał wyprodukować i przywieźć. Tak jest z jazdą autokarem, gorącym prysznicem, obiadem i butelką wody. Przy tym do powietrza trafiają gazy, głównie dwutlenek węgla (CO2). Zatrzymują one ciepło przy Ziemi i przez to klimat się ociepla.</p>
+      <p>Ślad węglowy to suma tych gazów, policzona dla jednej osoby albo jednej rzeczy. Podajemy go w kilogramach CO2e. Ta literka „e” oznacza, że inne takie gazy też są przeliczone na dwutlenek węgla. Im mniejsza liczba, tym mniej ogrzewamy klimat.</p>
+      <p>Tu liczymy tylko twój pobyt w Grecji: przejazd autokarem, nocleg, jedzenie, wodę w butelkach i wycieczki. Wynik to szacunek, a nie dokładny pomiar. Nie ma tu dobrej ani złej oceny, liczba pokazuje, co najbardziej się liczy i co możesz zmienić.</p>
+      <p class="drobne">${PYTANIA.length} pytań, jeden dotyk na każde. Zajmie to około 2 minut. Odpowiedzi zostają tylko na tym ekranie i znikają po zamknięciu strony.</p>
+    </section>
+    <div class="start-przycisk"><button class="duzy" data-akcja="zacznij">Zacznij</button></div>`;
+}
+
+function pytanie(krok) {
+  const p = PYTANIA[krok];
+  const numer = krok + 1;
+  const przyciski = p.odpowiedzi.map((a) =>
+    `<button class="odp" data-odp="${a.id}" aria-pressed="${odpowiedzi[p.id] === a.id}">${a.tekst}</button>`).join("");
+  const podpowiedz = p.podpowiedz ? `<p class="drobne">${p.podpowiedz}</p>` : "";
+  return `
+    <div class="gora">
+      <button class="cofnij" data-akcja="cofnij">Cofnij</button>
+      <span class="licznik">${numer} z ${OSTATNI_KROK}</span>
+    </div>
+    <div class="pasek" role="progressbar" aria-label="Postęp" aria-valuemin="0" aria-valuemax="${OSTATNI_KROK}" aria-valuenow="${numer}"><span style="width:${(numer / OSTATNI_KROK) * 100}%"></span></div>
+    <div class="pytanie" data-pytanie="${p.id}">
+      <h1 tabindex="-1">${p.pytanie}</h1>
+      ${podpowiedz}
+      <div class="odpowiedzi">${przyciski}</div>
+    </div>`;
+}
+
+function opisWiersza(wiersz, c) {
+  if (wiersz.id === "przejazd") return `<p class="drobne">Tego nie zmienisz: ${KM_W_JEDNA_STRONE} km w każdą stronę, ta sama trasa dla wszystkich.</p>`;
+  if (wiersz.id === "nocleg") {
+    return `<p class="drobne">Średni pokój ${Math.round(c.nocleg)} kg. Do tego: prysznic ${kgZeZnakiem(c.prysznic)}, klimatyzacja i ogrzewanie ${kgZeZnakiem(c.klima)}, światło i ładowarki ${kgZeZnakiem(c.swiatlo)}.</p>`;
+  }
+  return "";
+}
+
+function listaCzesci(wynikObliczen) {
+  const wiersze = podzial(wynikObliczen);
+  const najwieksza = Math.max(...wiersze.map((w) => w.kg));
+  return wiersze.map((w) => `
+    <li data-czesc="${w.id}">
+      <div class="wiersz"><span>${w.nazwa}</span><b>${kgCzesci(w)}</b></div>
+      <div class="slupek${w.id === "przejazd" ? " staly" : ""}" style="width:${w.kg > 0 ? Math.max(1, (w.kg / najwieksza) * 100) : 0}%"></div>
+      ${opisWiersza(w, wynikObliczen.czesci)}
+    </li>`).join("");
+}
+
+function jakLiczymy() {
+  return `
+    <details>
+      <summary>Jak to liczymy</summary>
+      <ul>
+        <li>Przejazd i wycieczki: ${liczbaPl(KG_KM_AUTOKAR, 3)} kg na osobę za każdy kilometr autokarem (UK DESNZ 2026). Trasa to około ${KM_W_JEDNA_STRONE} km w jedną stronę, a jedna wycieczka to przyjęte ${KM_NA_WYCIECZKE} km.</li>
+        <li>Nocleg: ${liczbaPl(KG_POKOJ_NOC, 1)} kg za pokój i noc, podzielone przez osoby w pokoju. ${LICZBA_NOCY} nocy. Średnia dla hoteli w Grecji poza kurortami (Cornell CHSB 2025).</li>
+        <li>Prysznic, klimatyzacja, światło i ładowarki: średnia jest już w noclegu, więc liczymy tylko różnicę. Minuta ciepłego prysznica to ${liczbaPl(KG_MINUTA_PRYSZNICA, 2)} kg, a 1 kWh prądu w Grecji to ${liczbaPl(KG_KWH_GRECJA, 2)} kg (Electricity Maps 2025). Moc urządzeń to nasze założenie.</li>
+        <li>Jedzenie: od ${liczbaPl(KG_DZIEN_WEGE, 1)} do ${liczbaPl(KG_DZIEN_DUZO_MIESA, 1)} kg dziennie, zależnie od ilości mięsa, przez ${LICZBA_DNI} dni. To średnie z badania dorosłych w Wielkiej Brytanii (Scarborough i in. 2023). Niezjedzone jedzenie to przyjęte 5 albo 15% więcej.</li>
+        <li>Woda: ${liczbaPl(KG_BUTELKA, 2)} kg za butelkę 0,5 l (Botto i in. 2011, butelki z Włoch).</li>
+        <li>Drzewa: młode drzewo w mieście pochłania około ${KG_DRZEWO_ROK} kg CO2 na rok (US EPA, średnia z 10 lat).</li>
+        <li>Nie liczymy pamiątek, zakupów ani segregacji, bo nie ma dla nich uczciwej liczby. To nie znaczy, że nie mają znaczenia.</li>
+      </ul>
+      <p>Wynik to szacunek, a nie pomiar. Prawdziwa liczba może być inna nawet o kilkadziesiąt kilogramów.</p>
+    </details>`;
+}
+
+function wynik() {
+  const w = oblicz(odpowiedzi);
+  const kg = Math.round(w.suma);
+  zapis.wybrane = zsynchronizujWybrane(zapis.wybrane, podpowiedzi(odpowiedzi));
+  return `
+    <div class="gora"><button class="cofnij" data-akcja="cofnij">Cofnij</button></div>
+    <div class="wynik">
+      <section class="liczba">
+        <h1 tabindex="-1">Twój ślad węglowy</h1>
+        <p class="kg" id="wynik-kg">${kg} <span>kg CO2e</span></p>
+        <p class="za">za pobyt</p>
+        <p class="drobne przypomnienie">kg CO2e to ilość gazów ogrzewających klimat przeliczona na dwutlenek węgla.</p>
+        <p class="drobne">To szacunek. Żeby pochłonąć tyle CO2, ${drzewaTekst(ileDrzew(w.suma))} rosnąć przez cały rok.</p>
+      </section>
+      <section><h2>Z czego to się bierze</h2><ul class="czesci">${listaCzesci(w)}</ul></section>
+      ${sekcjaRzeczy()}
+      <section class="kartka">
+        <h2>Zapisz na kartce</h2>
+        <ul>
+          <li>swoje imię</li>
+          <li>wynik: ${kg} kg CO2e</li>
+          <li>3 rzeczy, które zmienisz</li>
+        </ul>
+      </section>
+      ${sekcjaPobierania()}
+      <button class="duzy drugi" data-akcja="od-nowa">Policz od nowa</button>
+      ${jakLiczymy()}
+    </div>`;
+}
+
+function krokZAdresu() {
+  if (location.hash === HASH_WYNIK) return OSTATNI_KROK;
+  const dopasowanie = /^#p(\d+)$/.exec(location.hash);
+  return dopasowanie ? Number(dopasowanie[1]) - 1 : -1;
+}
+
+function czyDostepny(krok) {
+  return PYTANIA.slice(0, Math.max(krok, 0)).every((p) => odpowiedzi[p.id] !== undefined);
+}
+
+function ustawKrok(krok) {
+  if (krok < 0) {
+    history.pushState(null, "", location.pathname);
+    rysuj();
+    return;
+  }
+  location.hash = krok >= OSTATNI_KROK ? HASH_WYNIK : `#p${krok + 1}`;
+}
+
+function tresc(krok) {
+  if (krok < 0) return start();
+  return krok >= OSTATNI_KROK ? wynik() : pytanie(krok);
+}
+
+function rysuj() {
+  const krok = krokZAdresu();
+  ekran.innerHTML = tresc(czyDostepny(krok) ? krok : -1);
+  czasRysowania = performance.now();
+  window.scrollTo(0, 0);
+  ekran.querySelector("h1").focus({ preventScroll: true });
+}
+
+function zapiszOdpowiedz(idOdpowiedzi) {
+  const krok = krokZAdresu();
+  odpowiedzi[PYTANIA[krok].id] = idOdpowiedzi;
+  ustawKrok(krok + 1);
+}
+
+function policzOdNowa() {
+  odpowiedzi = {};
+  wyczyscZapis();
+  ustawKrok(-1);
+}
+
+function obsluzDotkniecie(zdarzenie) {
+  const przycisk = zdarzenie.target.closest("button");
+  if (!przycisk) return;
+  if (performance.now() - czasRysowania < BLOKADA_PODWOJNEGO_DOTKNIECIA_MS) return;
+  if (przycisk.dataset.odp !== undefined) return zapiszOdpowiedz(przycisk.dataset.odp);
+  const akcja = przycisk.dataset.akcja;
+  if (akcja === "zacznij") ustawKrok(0);
+  if (akcja === "cofnij") ustawKrok(krokZAdresu() - 1);
+  if (akcja === "dodaj-wlasna") dodajWlasna();
+  if (akcja === "pobierz") obsluzPobierz().catch(pokazBladPobierania);
+  if (akcja === "od-nowa") policzOdNowa();
+}
+
+ekran.addEventListener("click", obsluzDotkniecie);
+ekran.addEventListener("change", obsluzZapisZmiana);
+ekran.addEventListener("input", obsluzZapisWpisywanie);
+ekran.addEventListener("keydown", obsluzZapisKlawisz);
+window.addEventListener("hashchange", rysuj);
+rysuj();
+
+</script>
+</body>
+</html>
