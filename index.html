@@ -264,7 +264,7 @@ if (typeof module !== "undefined") {
 // Czysta logika zapisu wyniku: nazwa pliku, wybór rzeczy, zawijanie i układ obrazka. Bez DOM i bez stanu.
 
 const LIMIT_RZECZY = 3;
-const MAKS_ZNAKOW_W_NAZWIE = 40;
+const MAKS_ZNAKOW_W_NAZWIE = 60;
 const NAZWA_ZASTEPCZA = "uczestnik";
 const PLIK_PREFIKS = "Slad-weglowy-"; // Rdzenie „slad” i „weglow” z cele.json, po nich monitor przypisuje plik.
 
@@ -290,8 +290,26 @@ function bezDiakrytykow(tekst) {
   return tekst.replace(/ł/g, "l").replace(/Ł/g, "L").normalize("NFKD").replace(/[̀-ͯ]/g, "");
 }
 
-function nazwaPliku(imieIZespol) {
-  const rdzen = bezDiakrytykow(imieIZespol)
+// Cyrylica po ukraińsku (część grupy może wpisać imię w ten sposób), reszta to litery rosyjskie.
+const CYRYLICA = {
+  а: "a", б: "b", в: "v", г: "h", ґ: "g", д: "d", е: "e", є: "ye", ж: "zh", з: "z", и: "y", і: "i", ї: "yi", й: "y",
+  к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "kh", ц: "ts", ч: "ch",
+  ш: "sh", щ: "shch", ь: "", ю: "yu", я: "ya", ё: "e", ъ: "", ы: "y", э: "e",
+};
+
+function naLacinke(tekst) {
+  return tekst.replace(/[\u0400-\u04FF]/g, (znak) => {
+    const litery = CYRYLICA[znak.toLowerCase()] ?? "";
+    return znak === znak.toLowerCase() ? litery : litery.charAt(0).toUpperCase() + litery.slice(1);
+  });
+}
+
+function czyImieINazwisko(tekst) {
+  return tekst.trim().split(/\s+/).filter((czesc) => /\p{L}/u.test(czesc)).length >= 2;
+}
+
+function nazwaPliku(imieINazwisko) {
+  const rdzen = bezDiakrytykow(naLacinke(imieINazwisko))
     .replace(/[^A-Za-z0-9]+/g, "-")
     .replace(/^-+/, "")
     .slice(0, MAKS_ZNAKOW_W_NAZWIE)
@@ -416,7 +434,7 @@ function ukladRzeczy(komendy, rzeczy, yStart, mierz) {
 function ukladObrazka(dane, mierz) {
   const komendy = [];
   const w = OBRAZEK_SZEROKOSC - 2 * OBRAZEK_MARGINES;
-  let y = ukladNaglowka(komendy, dane.imieIZespol, mierz);
+  let y = ukladNaglowka(komendy, dane.imieINazwisko, mierz);
   y = ukladLiczby(komendy, dane.kg, y + 16, mierz);
   y = akapit(komendy, "To szacunek, a nie pomiar.", { x: OBRAZEK_MARGINES, y: y + 4, szerokosc: w, font: FONT_TEKST, kolor: KOLOR_DRUGI }, mierz);
   y = akapit(komendy, "Z czego to się bierze", { x: OBRAZEK_MARGINES, y: y + 48, szerokosc: w, font: FONT_NAGLOWEK, kolor: KOLOR_TEKST }, mierz);
@@ -453,7 +471,7 @@ function czyIos(nawigator) {
 }
 
 if (typeof module !== "undefined") {
-  module.exports = { LIMIT_RZECZY, nazwaPliku, czyPelne, przelaczRzecz, dodajWlasnaRzecz, zsynchronizujWybrane, kgCzesci, zawijaj, ukladObrazka, rysujObrazek, dataUrlNaBlob, czyIos };
+  module.exports = { LIMIT_RZECZY, nazwaPliku, czyImieINazwisko, czyPelne, przelaczRzecz, dodajWlasnaRzecz, zsynchronizujWybrane, kgCzesci, zawijaj, ukladObrazka, rysujObrazek, dataUrlNaBlob, czyIos };
 }
 
 const ADRES_DROPBOX = "https://www.dropbox.com/request/9en8vza88dlqm2zo7u8d";
@@ -515,9 +533,9 @@ function sekcjaRzeczy() {
 function sekcjaPobierania() {
   return `<section>
     <h2>Pobierz wynik</h2>
-    <label class="etykieta" for="imie">Imię i numer zespołu</label>
-    <input id="imie" type="text" autocomplete="off" maxlength="${MAKS_ZNAKOW_IMIE}" placeholder="np. Ania, zespół 3" value="${esc(zapis.imie)}" aria-describedby="blad-imie">
-    <p class="blad" id="blad-imie" hidden>Wpisz imię i numer zespołu, żeby pobrać wynik.</p>
+    <label class="etykieta" for="imie">Imię i nazwisko</label>
+    <input id="imie" type="text" autocomplete="off" maxlength="${MAKS_ZNAKOW_IMIE}" placeholder="np. Anna Kowalska" value="${esc(zapis.imie)}" aria-describedby="blad-imie">
+    <p class="blad" id="blad-imie" hidden>Wpisz imię i nazwisko, żeby pobrać wynik.</p>
     <button class="duzy pobierz" data-akcja="pobierz">Pobierz wynik</button>
     <p class="drobne wstep-pod">Gdyby pobieranie nie działało, zróbcie zrzut ekranu i wyślijcie jego.</p>
     <p class="stan" id="stan-pobrania" role="status"></p>
@@ -574,7 +592,7 @@ function generujObrazek() {
     return pomiar.measureText(tekst).width;
   };
   const uklad = ukladObrazka({
-    imieIZespol: zapis.imie.trim(),
+    imieINazwisko: zapis.imie.trim(),
     kg: Math.round(wynikObliczen.suma),
     czesci: podzial(wynikObliczen),
     rzeczy: zapis.wybrane.map((r) => r.tekst),
@@ -616,7 +634,7 @@ async function obsluzPobierz() {
   const pole = document.getElementById("imie");
   const blad = document.getElementById("blad-imie");
   zapis.imie = pole.value;
-  blad.hidden = zapis.imie.trim() !== "";
+  blad.hidden = czyImieINazwisko(zapis.imie);
   if (!blad.hidden) {
     pole.focus();
     return;
@@ -768,7 +786,7 @@ function wynik() {
       <section class="kartka">
         <h2>Zapisz na kartce</h2>
         <ul>
-          <li>swoje imię</li>
+          <li>swoje imię i nazwisko</li>
           <li>wynik: ${kg} kg CO2e</li>
           <li>3 rzeczy, które zmienisz</li>
         </ul>
